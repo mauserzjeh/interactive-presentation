@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
+    <link href="/css/style.css" rel="stylesheet">
+    <title>Interactive presentation - Admin</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-6">
+                <form class="form-horizontal" method="POST" action="/question/new" id="new-question-form">
+                    <fieldset>
+
+                        <legend>New question</legend>
+
+                        <div class="form-group">
+                            <label class="col-md-12 control-label" for="type">Type</label>
+                            <div class="col-md-12">
+                                <select id="type" name="type" class="form-control">
+                                    <% for (const [key, value] of Object.entries(questionTypes)) { %>
+                                        <option value="<%= value %>"><%= value %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12 control-label" for="question">Question</label>
+                            <div class="col-md-12">
+                                <input id="question" name="question" type="text" placeholder="type something..."
+                                    class="form-control input-md" required="">
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="textarea-options">
+                            <label class="col-md-12 control-label" for="options">Options</label>
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="options"
+                                    name="options" placeholder="please type in the options as a comma separated list..." required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12 control-label" for="cancel-btn"></label>
+                            <div class="col-md-12">
+                                <button type="submit" id="add-btn" name="add-btn" class="btn btn-primary float-right ml-2">Add</button>
+                                <button type="button" id="cancel-btn" name="cancel-btn"
+                                    class="btn btn-secondary float-right">Cancel</button>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+        <hr>
+        <% questions.forEach(function(question) { %>
+            <div class="row mt-2">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6">
+                    <div class="card <% if(question.id == currentQuestionId) { %> selected-question <% } %>">
+                        <div class="card-header">
+                            <% if(question.type == questionTypes.Q_TYPE_SELECT) { %>
+                                <i class="bi bi-ui-checks-grid"></i>
+                            <% } else if(question.type == questionTypes.Q_TYPE_NUMERIC) { %>
+                                <i class="bi bi-sort-numeric-up"></i>
+                            <% } else { %>    
+                                <i class="bi bi-chat-left-dots-fill"></i>
+                            <% } %>
+
+                            <span class="float-right ml-1" data-toggle="tooltip" data-placement="top" title="Delete"><a class="btn btn-sm btn-danger" href="/question/<%= question.id %>/del" role="button"><i class="bi bi-x-square-fill"></i></a></span>
+                            <% if(question.id != currentQuestionId) { %>
+                                <span class="float-right ml-1" data-toggle="tooltip" data-placement="top" title="Set as current"><a class="btn btn-sm btn-success" href="/question/<%= question.id %>/set" role="button"><i class="bi bi-bookmark-check-fill"></i></a></span>
+                            <% } %>
+
+                            <% if(question.type == questionTypes.Q_TYPE_SELECT) { %>
+                            <span class="float-right" data-toggle="tooltip" data-placement="top" title="See answer options">
+                                <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapse-<%= question.id %>" aria-expanded="false" aria-controls="collapse-<%= question.id %>"><i class="bi bi-eye-fill"></i></button>
+                            </span>
+                            <% } %>
+                        </div>
+                        <div class="card-body">
+                            <%= question.question %>
+                            <% if(question.type == questionTypes.Q_TYPE_SELECT) { %>
+                            
+                            <div class="collapse" id="collapse-<%= question.id %>">
+                                <ul class="list-group list-group-flush">
+                                    <% question.options.forEach(function(option) { %>
+                                        <li class="list-group-item"><%= option %></li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+        <% }); %>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+        $(function () {
+            const questionTypes = <%-JSON.stringify(questionTypes)%>;
+        
+            $('[data-toggle="tooltip"]').tooltip({
+                trigger : 'hover'
+            });
+
+            $('#type').on('change', function() {
+                let val = $(this).val();
+                if (val == questionTypes.Q_TYPE_SELECT) {
+                    $("#options").prop('disabled', false);
+                } else {
+                    $("#options").prop('disabled', true);
+                }
+            });
+
+            $('#cancel-btn').on('click', function() {
+                $('#new-question-form').trigger("reset");
+                $("#options").prop('disabled', false);
+            });
+        });
+    </script>
+</body>
+
+</html>
