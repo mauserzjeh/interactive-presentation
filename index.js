@@ -1,4 +1,5 @@
 const express = require("express");
+const basicAuth = require("express-basic-auth");
 const path = require("path");
 const morgan = require("morgan");
 
@@ -30,7 +31,12 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/admin", (req, res) => {
+app.get("/admin", basicAuth({
+    challenge: true,
+    users: {
+        'admin': 'admin',
+    }
+}),(req, res) => {
     res.render("admin", {
         questions: questions.questions,
         questionTypes: questions.QUESTION_TYPES,
