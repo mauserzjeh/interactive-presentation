@@ -23,7 +23,7 @@
                 <hr>
                 <form class="form-horizontal" method="POST" action="" id="answer-form">
                     <fieldset>
-                        <input type="hidden" name="id" id="id" value="<%= currentQuestionId %>">
+                        <input type="hidden" name="id" id="id" value="<%= question.id %>">
                         <input type="hidden" name="type" id="type" value="<%= question.type %>">
                         <% if(question.type == questionTypes.Q_TYPE_TEXT) { %>
                             <div class="form-group">
@@ -60,7 +60,7 @@
                                         <div class="col-md-12">
                                             <div class="radio">
                                                 <label for="options-<%= option %>">
-                                                    <input type="radio" name="answer" id="options-<%= option %>" value="<%= option %>">
+                                                    <input type="radio" name="answer" id="options-<%= option %>" value="<%= option %>" required>
                                                     <%= option %>
                                                 </label>
                                             </div>
@@ -91,6 +91,7 @@
     <script>
         $(function () {
             const questionTypes = <%-JSON.stringify(questionTypes)%>;
+            const currentQuestionId = "<%= question.id %>";
        
             $(".refresh-bar").on('click', function() {
                 window.location.reload();
@@ -131,6 +132,17 @@
                 .catch(error => console.error(error));
             });
 
+
+            setInterval(function() {
+                fetch("/question/current")
+                .then(response => response.text())
+                .then(data => {
+                    if(data != currentQuestionId) {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error(error));
+            }, 1000);
         });
     </script>
 </body>

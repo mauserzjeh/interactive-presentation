@@ -12,9 +12,6 @@ const QUESTION_TYPES = {
     Q_TYPE_TEXT,
 }
 
-const generateId = function() {
-    return crypto.randomBytes(6).toString('hex');
-};
 
 let questions = [
     {
@@ -40,6 +37,49 @@ let questions = [
 
 let currentQuestionId = questions[0].id;
 
+const generateId = function() {
+    return crypto.randomBytes(6).toString('hex');
+};
+
+const getCurrentQuestion = function() {
+    return questions.find(item => item.id === currentQuestionId);
+};
+
+const getCurrentQuestionId = function() {
+    return currentQuestionId;
+};
+
+const getQuestionById =  function(id) {
+    return questions.find(item => item.id === id);
+};
+
+router.route("/new").post((req, res) => {
+    let id = generateId()
+    let idx = questions.findIndex(item => item.id === id);
+    
+    while(idx != -1) {
+        id = generateId();
+    }
+
+
+    let question = {
+        "id": id,
+        "type": req.body.type,
+        "question": req.body.question,
+        "answers": []
+    };
+
+    if (question.type == Q_TYPE_SELECT) {
+        question.options = req.body.options.split(',')
+    }
+
+    questions.push(question);
+    res.redirect("/admin");
+});
+
+router.route("/current").get((req, res) => {
+    res.send(getCurrentQuestionId());
+});
 
 // get question with given id
 router.route("/:id").get((req, res) => {
@@ -90,53 +130,23 @@ router.route("/:id/answer").post((req, res) => {
             success: false,
             error: "Question not found"
         });
+        return
     }
 
     questions[idx].answers.push(req.body.answer);
-
-    console.log(questions);
-
     res.send({
         success: true
     });
 });
 
-router.route("/new").post((req, res) => {
-    let id = generateId()
-    let idx = questions.findIndex(item => item.id === id);
-    
-    while(idx != -1) {
-        id = generateId();
-    }
 
-
-    let question = {
-        "id": id,
-        "type": req.body.type,
-        "question": req.body.question,
-        "answers": []
-    };
-
-    if (question.type == Q_TYPE_SELECT) {
-        question.options = req.body.options.split(',')
-    }
-
-    questions.push(question);
-    res.redirect("/admin");
-});
 
 
 module.exports = {
     QUESTION_TYPES,
     router,
     questions,
-    getCurrentQuestion: function() {
-        return questions.find(item => item.id === currentQuestionId);
-    },
-    getCurrentQuestionId: function() {
-        return currentQuestionId;
-    },
-    getQuestionById: function(id) {
-        return questions.find(item => item.id === id);
-    }
+    getCurrentQuestion,
+    getCurrentQuestionId,
+    getQuestionById
 };

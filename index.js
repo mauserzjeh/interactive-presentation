@@ -27,7 +27,6 @@ app.get("/", (req, res) => {
     res.render("index", {
         question: questions.getCurrentQuestion(),
         questionTypes: questions.QUESTION_TYPES,
-        currentQuestionId: questions.getCurrentQuestionId(),
     });
 });
 
