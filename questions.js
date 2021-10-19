@@ -82,10 +82,19 @@ router.route("/:id/del").get((req, res) => {
 });
 
 router.route("/:id/answer").post((req, res) => {
-    console.log(
-        req.body,
-        req.params.id
-    );
+    let id = req.params.id
+    let idx = questions.findIndex(item => item.id === id);
+
+    if(idx == -1) {
+        res.send({
+            success: false,
+            error: "Question not found"
+        });
+    }
+
+    questions[idx].answers.push(req.body.answer);
+
+    console.log(questions);
 
     res.send({
         success: true

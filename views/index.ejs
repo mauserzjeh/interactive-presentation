@@ -24,6 +24,7 @@
                 <form class="form-horizontal" method="POST" action="" id="answer-form">
                     <fieldset>
                         <input type="hidden" name="id" id="id" value="<%= currentQuestionId %>">
+                        <input type="hidden" name="type" id="type" value="<%= question.type %>">
                         <% if(question.type == questionTypes.Q_TYPE_TEXT) { %>
                             <div class="form-group">
                                 <label class="col-md-4 control-label" for="answer"></label>
@@ -59,7 +60,7 @@
                                         <div class="col-md-12">
                                             <div class="radio">
                                                 <label for="options-<%= option %>">
-                                                    <input type="radio" name="answer" id="options-<%= option %>" value="<%= option %>" required>
+                                                    <input type="radio" name="answer" id="options-<%= option %>" value="<%= option %>">
                                                     <%= option %>
                                                 </label>
                                             </div>
@@ -89,6 +90,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script>
         $(function () {
+            const questionTypes = <%-JSON.stringify(questionTypes)%>;
        
             $(".refresh-bar").on('click', function() {
                 window.location.reload();
@@ -97,9 +99,14 @@
             $("#answer-form").on('submit', function(e) {
                 e.preventDefault();
                 let qid = $(this).find('input[name="id"]').val();
+                let type = $(this).find('input[name="type"]').val();
+
                 let answer = $(this).find('input[name="answer"]').val();
+                if(type == questionTypes.Q_TYPE_SELECT) {
+                    answer = $(this).find('input:radio[name="answer"]:checked').val();
+                }
+
                 let submitBtn = $(this).find('button[type="submit"]');
-                
 
                 let url = "/question/" + qid + "/answer"
                 fetch(url, {
