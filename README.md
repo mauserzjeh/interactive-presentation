@@ -16,6 +16,8 @@ The admin page uses basic authentication where:
 - username: admin
 - password: admin
 
+The main page will "block" the ability to answer a question multiple times by a single person. For demo purposes the page can be refreshed and the question can be answered again.
+
 # Main endpoints:
 | Method | Endpoint | Description                             |
 |--------|----------|-----------------------------------------|
