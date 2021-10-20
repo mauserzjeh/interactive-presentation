@@ -20,3 +20,7 @@
 .current-question {
     margin-top: 150px;
 }
+
+.sepa-l {
+    border-left: 1px solid lightgray;
+}

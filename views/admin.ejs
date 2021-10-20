@@ -13,54 +13,57 @@
 
 <body>
     <div class="container-fluid">
-        <div class="row">
+        <div class="row mt-5">
             <div class="col-md-3">
             </div>
             <div class="col-md-6">
-                <form class="form-horizontal" method="POST" action="/question/new" id="new-question-form">
-                    <fieldset>
-
-                        <legend>New question</legend>
-
-                        <div class="form-group">
-                            <label class="col-md-12 control-label" for="type">Type</label>
-                            <div class="col-md-12">
-                                <select id="type" name="type" class="form-control">
-                                    <% for (const [key, value] of Object.entries(questionTypes)) { %>
-                                        <option value="<%= value %>"><%= value %></option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-12 control-label" for="question">Question</label>
-                            <div class="col-md-12">
-                                <input id="question" name="question" type="text" placeholder="type something..."
-                                    class="form-control input-md" required="">
-
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="textarea-options">
-                            <label class="col-md-12 control-label" for="options">Options</label>
-                            <div class="col-md-12">
-                                <textarea class="form-control" id="options"
-                                    name="options" placeholder="please type in the options as a comma separated list..." required></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-12 control-label" for="cancel-btn"></label>
-                            <div class="col-md-12">
-                                <button type="submit" id="add-btn" name="add-btn" class="btn btn-primary float-right ml-2">Add</button>
-                                <button type="button" id="cancel-btn" name="cancel-btn"
-                                    class="btn btn-secondary float-right">Cancel</button>
-                            </div>
-                        </div>
-
-                    </fieldset>
-                </form>
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form class="form-horizontal" method="POST" action="/question/new" id="new-question-form">
+                            <fieldset>
+        
+                                <legend class="text-center">New question</legend>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label" for="type">Type</label>
+                                    <div class="col-md-12">
+                                        <select id="type" name="type" class="form-control">
+                                            <% for (const [key, value] of Object.entries(questionTypes)) { %>
+                                                <option value="<%= value %>"><%= value %></option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                </div>
+        
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label" for="question">Question</label>
+                                    <div class="col-md-12">
+                                        <input id="question" name="question" type="text" placeholder="type something..."
+                                            class="form-control input-md" required="">
+        
+                                    </div>
+                                </div>
+        
+                                <div class="form-group" id="textarea-options">
+                                    <label class="col-md-12 control-label" for="options">Options</label>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" id="options"
+                                            name="options" placeholder="please type in the options as a comma separated list..." required></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label" for="cancel-btn"></label>
+                                    <div class="col-md-12">
+                                        <button type="submit" id="add-btn" name="add-btn" class="btn btn-primary float-right ml-2">Add</button>
+                                        <button type="button" id="cancel-btn" name="cancel-btn"
+                                            class="btn btn-secondary float-right">Cancel</button>
+                                    </div>
+                                </div>
+        
+                            </fieldset>
+                        </form>                    
+                    </div>
+                </div>
             </div>
             <div class="col-md-3">
             </div>
@@ -71,9 +74,9 @@
                 <div class="col-md-3">
                 </div>
                 <div class="col-md-6">
-                    <div class="card <% if(question.id == currentQuestionId) { %> selected-question <% } %>">
+                    <div class="card shadow <% if(question.id == currentQuestionId) { %> selected-question <% } %>">
                         <div class="card-header">
-                            <% if(question.type == questionTypes.Q_TYPE_SELECT) { %>
+                            <% if(question.type == questionTypes.Q_TYPE_OPTION) { %>
                                 <i class="bi bi-ui-checks-grid"></i>
                             <% } else if(question.type == questionTypes.Q_TYPE_NUMERIC) { %>
                                 <i class="bi bi-sort-numeric-up"></i>
@@ -86,7 +89,9 @@
                                 <span class="float-right ml-1" data-toggle="tooltip" data-placement="top" title="Set as current"><a class="btn btn-sm btn-success" href="/question/<%= question.id %>/set" role="button"><i class="bi bi-bookmark-check-fill"></i></a></span>
                             <% } %>
 
-                            <% if(question.type == questionTypes.Q_TYPE_SELECT) { %>
+                            <span class="float-right ml-1" data-toggle="tooltip" data-placement="top" title="Reset answers"><a class="btn btn-sm btn-secondary" href="/question/<%= question.id %>/reset" role="button"><i class="bi bi-eraser-fill"></i></a></span>
+
+                            <% if(question.type == questionTypes.Q_TYPE_OPTION) { %>
                             <span class="float-right" data-toggle="tooltip" data-placement="top" title="See answer options">
                                 <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapse-<%= question.id %>" aria-expanded="false" aria-controls="collapse-<%= question.id %>"><i class="bi bi-eye-fill"></i></button>
                             </span>
@@ -94,7 +99,7 @@
                         </div>
                         <div class="card-body">
                             <%= question.question %>
-                            <% if(question.type == questionTypes.Q_TYPE_SELECT) { %>
+                            <% if(question.type == questionTypes.Q_TYPE_OPTION) { %>
                             
                             <div class="collapse" id="collapse-<%= question.id %>">
                                 <ul class="list-group list-group-flush">
@@ -125,7 +130,7 @@
 
             $('#type').on('change', function() {
                 let val = $(this).val();
-                if (val == questionTypes.Q_TYPE_SELECT) {
+                if (val == questionTypes.Q_TYPE_OPTION) {
                     $("#options").prop('disabled', false);
                 } else {
                     $("#options").prop('disabled', true);
