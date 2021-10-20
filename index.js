@@ -14,6 +14,7 @@ const port = 3000;
 // use morgan middleware for logging
 app.use(morgan("tiny"));
 
+// for easier parsing of request body for POST requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -52,7 +53,7 @@ io.on("connect", function(socket) {
             question: "Waiting for a question...",
             results: []
         }
-        
+
         if(currentQuestion) {
             sendpayload = {
                 question: currentQuestion.question,

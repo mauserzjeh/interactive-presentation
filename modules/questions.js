@@ -2,7 +2,7 @@ const express = require("express");
 const crypto = require("crypto");
 const router = express.Router();
 
-// question types
+// question type constants
 const Q_TYPE_OPTION = "OPTION";
 const Q_TYPE_NUMERIC = "NUMERIC";
 const Q_TYPE_TEXT = "TEXT";
@@ -13,7 +13,7 @@ const QUESTION_TYPES = {
     Q_TYPE_TEXT,
 }
 
-// hardcoded default questions
+// hardcoded default question examples
 let questions = [
     {
         "id": "1d1248add827",
@@ -39,22 +39,27 @@ let questions = [
 // default current question 
 let currentQuestionId = questions[0].id;
 
+// generate a random ID for the question
 function generateId() {
     return crypto.randomBytes(6).toString('hex');
 };
 
+// returns the current question object
 function getCurrentQuestion() {
     return questions.find(item => item.id === currentQuestionId);
 };
 
+// returns the ID of the current question
 function getCurrentQuestionId() {
     return currentQuestionId;
 };
 
+// returns a question object by ID
 function getQuestionById(id) {
     return questions.find(item => item.id === id);
 };
 
+// calculate the percentage of the answers
 function calculateAnswerPercentage(answers) {
     let percentages = {}
     let total = answers.length;
@@ -71,6 +76,7 @@ function calculateAnswerPercentage(answers) {
 // socket.io as a passed parameter
 module.exports = function (io) {
 
+    // create a new question
     router.route("/new").post((req, res) => {
         let id = generateId()
         let idx = questions.findIndex(item => item.id === id);
@@ -95,6 +101,7 @@ module.exports = function (io) {
         res.redirect("/admin");
     });
 
+    // get the current question
     router.route("/current").get((req, res) => {
         res.send(getCurrentQuestionId());
     });
@@ -112,7 +119,7 @@ module.exports = function (io) {
         res.send(question);
     });
 
-    // set question to be the current with given index
+    // set question to be the current with given ID
     router.route("/:id/set").get((req, res) => {
         let id = req.params.id;
         let question = questions.find(item => item.id === id);
@@ -127,6 +134,7 @@ module.exports = function (io) {
         res.redirect("/admin");
     });
 
+    // reset the answers of the question with given ID
     router.route("/:id/reset").get((req, res) => {
         let id = req.params.id;
         let idx = questions.findIndex(item => item.id === id);
@@ -141,6 +149,7 @@ module.exports = function (io) {
         res.redirect("/admin");
     });
 
+    // delete the question with the given ID
     router.route("/:id/del").get((req, res) => {
         let id = req.params.id;
         let idx = questions.findIndex(item => item.id === id);
@@ -155,6 +164,7 @@ module.exports = function (io) {
         res.redirect("/admin");
     });
 
+    // register an answer for a question with the given ID
     router.route("/:id/answer").post((req, res) => {
         let id = req.params.id
         let idx = questions.findIndex(item => item.id === id);
@@ -184,5 +194,6 @@ module.exports = function (io) {
         getQuestionById,
         calculateAnswerPercentage
     }
+    
     return module;
 };
